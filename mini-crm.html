@@ -1,0 +1,181 @@
+mini-crm.html
+<!DOCTYPE html>
+<html>
+<head>
+<title>Mini CRM - Lead Management</title>
+
+<style>
+
+body{
+font-family: Arial;
+background:#f4f4f4;
+margin:0;
+padding:20px;
+}
+
+h1{
+text-align:center;
+}
+
+.container{
+max-width:800px;
+margin:auto;
+background:white;
+padding:20px;
+border-radius:8px;
+box-shadow:0 0 10px rgba(0,0,0,0.1);
+}
+
+input, select{
+width:100%;
+padding:10px;
+margin:8px 0;
+}
+
+button{
+padding:8px 15px;
+margin-top:10px;
+background:#333;
+color:white;
+border:none;
+cursor:pointer;
+}
+
+table{
+width:100%;
+margin-top:20px;
+border-collapse:collapse;
+}
+
+table, th, td{
+border:1px solid #ddd;
+}
+
+th, td{
+padding:10px;
+text-align:center;
+}
+
+.delete{
+background:red;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>Client Lead Management (Mini CRM)</h1>
+
+<h3>Add Lead</h3>
+
+<input id="name" placeholder="Client Name">
+<input id="email" placeholder="Client Email">
+
+<select id="status">
+<option>New</option>
+<option>Contacted</option>
+<option>Converted</option>
+</select>
+
+<button onclick="addLead()">Add Lead</button>
+
+<h3>Lead List</h3>
+
+<table>
+
+<thead>
+<tr>
+<th>Name</th>
+<th>Email</th>
+<th>Status</th>
+<th>Delete</th>
+</tr>
+</thead>
+
+<tbody id="leadTable"></tbody>
+
+</table>
+
+</div>
+
+<script>
+
+let leads = JSON.parse(localStorage.getItem("leads")) || [];
+
+function displayLeads(){
+
+let table = document.getElementById("leadTable");
+table.innerHTML="";
+
+leads.forEach((lead,index)=>{
+
+table.innerHTML += `
+<tr>
+<td>${lead.name}</td>
+<td>${lead.email}</td>
+
+<td>
+<select onchange="updateStatus(${index},this.value)">
+<option ${lead.status=="New"?"selected":""}>New</option>
+<option ${lead.status=="Contacted"?"selected":""}>Contacted</option>
+<option ${lead.status=="Converted"?"selected":""}>Converted</option>
+</select>
+</td>
+
+<td>
+<button class="delete" onclick="deleteLead(${index})">Delete</button>
+</td>
+
+</tr>
+`;
+
+});
+
+}
+
+function addLead(){
+
+let name = document.getElementById("name").value;
+let email = document.getElementById("email").value;
+let status = document.getElementById("status").value;
+
+if(name=="" || email==""){
+alert("Please fill all fields");
+return;
+}
+
+leads.push({name,email,status});
+
+localStorage.setItem("leads",JSON.stringify(leads));
+
+displayLeads();
+
+}
+
+function deleteLead(index){
+
+leads.splice(index,1);
+
+localStorage.setItem("leads",JSON.stringify(leads));
+
+displayLeads();
+
+}
+
+function updateStatus(index,value){
+
+leads[index].status=value;
+
+localStorage.setItem("leads",JSON.stringify(leads));
+
+}
+
+displayLeads();
+
+</script>
+
+</body>
+</html>
